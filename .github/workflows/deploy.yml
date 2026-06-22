@@ -33,7 +33,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: 'npm'
 
       - name: Install Dependencies
@@ -57,8 +57,8 @@ jobs:
           # Use rsync or cp. Here we use cp.
           # Note: adjust these paths if submodules require a build step themselves
           # before their dist/build folders can be copied.
-          cp -r portfolio/* out/portfolio/ 2>/dev/null || true
-          cp -r loan_tracker/* out/loan_tracker/ 2>/dev/null || true
+          cp -r modules/portfolio/* out/portfolio/ 2>/dev/null || true
+          cp -r modules/loan_tracker/* out/loan_tracker/ 2>/dev/null || true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
