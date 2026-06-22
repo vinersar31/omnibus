@@ -155,8 +155,18 @@ export default function Home() {
           <div
             key={item.id}
             draggable
-            onDragStart={() => setDragIndex(index)}
+            onDragStart={(e) => {
+              setDragIndex(index);
+              e.dataTransfer.effectAllowed = 'move';
+              // Required for the drag to actually start in Firefox/Safari.
+              e.dataTransfer.setData('text/plain', item.id);
+            }}
             onDragOver={(e) => {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = 'move';
+              if (overIndex !== index) setOverIndex(index);
+            }}
+            onDragEnter={(e) => {
               e.preventDefault();
               setOverIndex(index);
             }}
