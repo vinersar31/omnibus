@@ -1,6 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import {
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  rectSortingStrategy,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 type AppItem = {
   id: string;
@@ -101,10 +120,33 @@ function Tile({ item }: { item: AppItem }) {
   );
 }
 
+function SortableTile({ item }: { item: AppItem }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: item.id });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`touch-none select-none rounded-2xl cursor-grab active:cursor-grabbing transition-opacity ${
+        isDragging ? 'opacity-30' : 'opacity-100'
+      }`}
+    >
+      <Tile item={item} />
+    </div>
+  );
+}
+
 export default function Home() {
   const [items, setItems] = useState<AppItem[]>(DEFAULT_ITEMS);
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [overIndex, setOverIndex] = useState<number | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -122,24 +164,31 @@ export default function Home() {
     }
   }, []);
 
-  const persist = (next: AppItem[]) => {
-    setItems(next);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next.map((i) => i.id)));
+  const sensors = useSensors(
+    // A small activation distance lets normal clicks open the links.
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(String(event.active.id));
   };
 
-  const handleDrop = (target: number) => {
-    if (dragIndex === null || dragIndex === target) {
-      setDragIndex(null);
-      setOverIndex(null);
-      return;
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+    if (over && active.id !== over.id) {
+      setItems((prev) => {
+        const oldIndex = prev.findIndex((i) => i.id === active.id);
+        const newIndex = prev.findIndex((i) => i.id === over.id);
+        const next = arrayMove(prev, oldIndex, newIndex);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next.map((i) => i.id)));
+        return next;
+      });
     }
-    const next = [...items];
-    const [moved] = next.splice(dragIndex, 1);
-    next.splice(target, 0, moved);
-    persist(next);
-    setDragIndex(null);
-    setOverIndex(null);
   };
+
+  const activeItem = items.find((i) => i.id === activeId) ?? null;
 
   return (
     <main className="min-h-screen p-8 sm:p-12 md:p-24 flex flex-col items-center">
@@ -150,46 +199,29 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 md:gap-12 w-full max-w-4xl justify-items-center">
-        {items.map((item, index) => (
-          <div
-            key={item.id}
-            draggable
-            onDragStart={(e) => {
-              setDragIndex(index);
-              e.dataTransfer.effectAllowed = 'move';
-              // Required for the drag to actually start in Firefox/Safari.
-              e.dataTransfer.setData('text/plain', item.id);
-            }}
-            onDragOver={(e) => {
-              e.preventDefault();
-              e.dataTransfer.dropEffect = 'move';
-              if (overIndex !== index) setOverIndex(index);
-            }}
-            onDragEnter={(e) => {
-              e.preventDefault();
-              setOverIndex(index);
-            }}
-            onDragEnd={() => {
-              setDragIndex(null);
-              setOverIndex(null);
-            }}
-            onDrop={(e) => {
-              e.preventDefault();
-              handleDrop(index);
-            }}
-            className={`cursor-grab active:cursor-grabbing transition-all duration-200 ${
-              dragIndex === index ? 'opacity-40 scale-95' : ''
-            } ${
-              overIndex === index && dragIndex !== null && dragIndex !== index
-                ? 'scale-110'
-                : ''
-            }`}
-          >
-            <Tile item={item} />
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={() => setActiveId(null)}
+      >
+        <SortableContext items={items.map((i) => i.id)} strategy={rectSortingStrategy}>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 md:gap-12 w-full max-w-4xl justify-items-center">
+            {items.map((item) => (
+              <SortableTile key={item.id} item={item} />
+            ))}
           </div>
-        ))}
-      </div>
+        </SortableContext>
+
+        <DragOverlay>
+          {activeItem ? (
+            <div className="scale-110 cursor-grabbing drop-shadow-2xl">
+              <Tile item={activeItem} />
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     </main>
   );
 }
