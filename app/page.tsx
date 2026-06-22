@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 export default function Home() {
   return (
     <main className="min-h-screen p-8 sm:p-12 md:p-24 flex flex-col items-center">
@@ -12,8 +10,10 @@ export default function Home() {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 md:gap-12 w-full max-w-4xl justify-items-center">
         {/* Portfolio App Icon */}
-        <Link
-          href="/portfolio"
+        <a
+          href="https://vinersardan.com"
+          target="_blank"
+          rel="noopener noreferrer"
           className="group flex flex-col items-center gap-3 transition-transform duration-200 hover:-translate-y-2 active:translate-y-0"
         >
           <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-gradient-to-br from-blue-500 to-indigo-600 squircle shadow-lg shadow-indigo-500/30 flex items-center justify-center transition-all duration-200 group-hover:shadow-indigo-500/50">
@@ -22,11 +22,13 @@ export default function Home() {
             </svg>
           </div>
           <span className="text-sm sm:text-base font-medium">Portfolio</span>
-        </Link>
+        </a>
 
         {/* Loan Tracker App Icon */}
-        <Link
-          href="/loan_tracker"
+        <a
+          href="https://vinersar31.github.io/loan_tracker/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="group flex flex-col items-center gap-3 transition-transform duration-200 hover:-translate-y-2 active:translate-y-0"
         >
           <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-gradient-to-br from-emerald-500 to-teal-600 squircle shadow-lg shadow-emerald-500/30 flex items-center justify-center transition-all duration-200 group-hover:shadow-emerald-500/50">
@@ -35,7 +37,7 @@ export default function Home() {
             </svg>
           </div>
           <span className="text-sm sm:text-base font-medium">Loan Tracker</span>
-        </Link>
+        </a>
 
         {/* Wealth App Icon (Coming Soon) */}
         <div className="group flex flex-col items-center gap-3 cursor-not-allowed opacity-60">

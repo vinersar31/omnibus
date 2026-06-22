@@ -22,18 +22,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository and Submodules
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          # Fetch submodules recursively
-          submodules: recursive
-          # We need all history if the submodules are complex, but typically fetch-depth 1 is fine
           fetch-depth: 1
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: 'npm'
 
       - name: Install Dependencies
@@ -42,23 +39,6 @@ jobs:
       - name: Build Main Next.js App
         # This will export the app to the 'out' directory
         run: npm run build
-
-      # Assuming the submodules are static sites or have their own build processes.
-      # If they are just static HTML/CSS/JS, we can just copy them.
-      # If they need building, add steps here to build them.
-      # For this example, we'll assume they just need to be copied into the final 'out' folder.
-      - name: Prepare Submodules for Output
-        run: |
-          echo "Copying submodules to the final output directory"
-          # Create directories if they don't exist in the output folder
-          mkdir -p out/portfolio out/loan_tracker
-
-          # Copy submodule contents to the output folder
-          # Use rsync or cp. Here we use cp.
-          # Note: adjust these paths if submodules require a build step themselves
-          # before their dist/build folders can be copied.
-          cp -r portfolio/* out/portfolio/ 2>/dev/null || true
-          cp -r loan_tracker/* out/loan_tracker/ 2>/dev/null || true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
