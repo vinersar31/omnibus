@@ -1,0 +1,6 @@
+[submodule "modules/loan_tracker"]
+	path = modules/loan_tracker
+	url = https://github.com/vinersar31/loan_tracker
+[submodule "modules/portfolio"]
+	path = modules/portfolio
+	url = https://github.com/vinersar31/portfolio
