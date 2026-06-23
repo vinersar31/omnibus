@@ -4,3 +4,6 @@
 [submodule "modules/portfolio"]
 	path = modules/portfolio
 	url = https://github.com/vinersar31/portfolio
+[submodule "modules/sentinel"]
+	path = modules/sentinel
+	url = https://github.com/vinersar31/sentinel
