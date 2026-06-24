@@ -77,7 +77,7 @@ const DEFAULT_ITEMS: AppItem[] = [
   },
 ];
 
-const STORAGE_KEY = 'omnibus-launcher-order';
+const STORAGE_KEY = 'personal-ops-launcher-order';
 
 function Tile({ item }: { item: AppItem }) {
   const content = (
@@ -203,7 +203,7 @@ export default function Home() {
   return (
     <main className="min-h-screen p-8 sm:p-12 md:p-24 flex flex-col items-center">
       <header className="w-full max-w-4xl flex justify-between items-center mb-16">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Omnibus</h1>
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Personal Ops</h1>
         <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
           Launcher
         </div>

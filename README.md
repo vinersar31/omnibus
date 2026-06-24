@@ -1,6 +1,6 @@
-# Omnibus Launcher
+# Personal Ops Launcher
 
-Omnibus is a centralized app launcher built with Next.js (App Router) and Tailwind CSS. It serves as a static hub to route users to independent app submodules like Portfolio and Loan Tracker.
+Personal Ops is a centralized app launcher built with Next.js (App Router) and Tailwind CSS. It serves as a static hub to route users to independent app submodules like Portfolio and Loan Tracker.
 
 ## Features
 - **Sleek Interface**: Modern mobile OS-style layout with "squircles" and hover effects.
@@ -22,4 +22,4 @@ npm run dev &
 \`\`\`
 
 ## Deployment
-Omnibus is configured to deploy via GitHub Actions to GitHub Pages. It will recursively check out submodules and generate a static output in the `out` directory.
+Personal Ops is configured to deploy via GitHub Actions to GitHub Pages. It will recursively check out submodules and generate a static output in the `out` directory.
